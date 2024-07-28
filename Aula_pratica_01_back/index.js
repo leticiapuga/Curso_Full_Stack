@@ -111,11 +111,11 @@ app.put(("/usuario/:id"), async (request, response) => {
     const{ nome, email, data_nascimento } = request.body; 
     const { id } = request.params;
 
-    const pacientes = await pool.query('SELECT * FROM pacientes WHERE $1', [id])
+    const pacientes = await pool.query('SELECT * FROM pacientes WHERE id = $1', [id])
 
-    if(usuarios){
-        const pacientes = await pool.query('UPDATE pacientes')
-        response.status(200).json(usuarios)
+    if(pacientes){
+        const pacientes = await pool.query('UPDATE pacientes SET nome = $1, email = $2, data_nascimento = $3 WHERE id = $4',[nome, email, data_nascimento, id])
+        response.status(200).json('')
     } else {
         response.status(404).json("Usuário não encontrado")
     }
@@ -123,10 +123,11 @@ app.put(("/usuario/:id"), async (request, response) => {
 
 app.delete(("/usuario/:id"), (request, response) => {
     const{ id } = request.params; 
+
     const index = usuarios.findIndex(u => u.id = id)
 
     if (index != 1) {
-        usuario.slice(index, 1)
+       
         response.status(204).send()
     } else{
         response.status(404).json("Usuário não encontrado")
