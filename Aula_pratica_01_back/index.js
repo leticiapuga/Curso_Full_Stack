@@ -109,6 +109,7 @@ app.post(("/usuarios"), async(request, response) => {
 
 app.put(("/usuario/:id"), async (request, response) => {
     const{ nome, email, data_nascimento } = request.body; 
+
     const { id } = request.params;
 
     const pacientes = await pool.query('SELECT * FROM pacientes WHERE id = $1', [id])
@@ -121,15 +122,15 @@ app.put(("/usuario/:id"), async (request, response) => {
     }
 })
 
-app.delete(("/usuario/:id"), (request, response) => {
+app.delete(("/usuario/:id"), async (request, response) => {
     const{ id } = request.params; 
 
-    const index = usuarios.findIndex(u => u.id = id)
+    const pacientes = await pool.query('SELECT * FROM pacientes WHERE id = $1', [id])
 
-    if (index != 1) {
-       
-        response.status(204).send()
-    } else{
+    if(pacientes.rows.lenth > 0){
+        await pool.query('DELETE FROM pacientes WHERE id = $1', [id])
+        response.status(200).json('')
+    } else {
         response.status(404).json("Usuário não encontrado")
     }
 
