@@ -14,7 +14,7 @@ app.get("/users", async (request, response) => {
     
     const users = await prisma.user.findMany();
 
-    response.status(200).json(users);
+    response.status(200).json(users);   
 });
 
 // DEFINE UMA ROTA POST (CRIAR) PARA O ENDPOINT '/usuarios'
