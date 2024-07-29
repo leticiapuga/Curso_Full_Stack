@@ -1,36 +1,20 @@
-// IMPORTA O MÓDULO 'express' QUE É UM FRAMEWORK PARA CONSTRUIR APLICATIVOS WEB EM NODE.JS
 const express = require('express');
 
-// CRIA UMA APLICAÇÃO EXPRESS
-const app = express(); // A PARTIR DE AGORA SEMPRE QUE EU UTILIZAR O "app" ESTAREI UTILIZANDO O "express", POIS O APP É UM ATALHO
+const {PrismaClient} = require('@prisma/client')
 
-// CONFIGURA A APLICAÇÃO PARA PARSEAR DADOS JSON ENVIADOS NO BODY DAS REQUISIÇÕES
+
+const app = express(); 
+
+
 app.use(express.json());
 
-// DESESTRUTURAÇÃO PARA PEGAR APENAS O OBJETO 'Pool' DO MÓDULO 'pg'
-const { Pool } = pg;
+const prisma = new PrismaClient();
 
-// CRIA UMA INSTÂNCIA DE POOL PARA CONEXÃO COM O BANCO DE DADOS POSTGRESQL
-const pool = new Pool({
-    user: "postgres", // NOME DE USUÁRIO PARA O BANCO DE DADOS
-    password: "mysecretpassword", // SENHA PARA O BANCO DE DADOS
-    database: "bootcamp_01", // NOME DO BANCO DE DADOS
-    port: 5432 // PORTA NA QUAL O BANCO DE DADOS ESTÁ RODANDO
-});
+app.get("/users", async (request, response) => {
+    
+    const users = await prisma.user.findMany();
 
-// DEFINE UM ARRAY DE OBJETOS 'usuarios' PARA USO FUTURO, PROVAVELMENTE COMO DADOS DE EXEMPLO
-const usuarios = [
-    { id: 1, nome: "Letícia", email: "leticiademirandapuga@gmail.com" },
-    { id: 2, nome: "Laura", email: "laurapuga@gmail.com" },
-    { id: 3, nome: "Davi", email: "dmpms@gmail.com" }
-];
-
-// DEFINE UMA ROTA GET (BUSCAR) PARA O ENDPOINT '/pacientes'
-app.get("/pacientes", async (request, response) => {
-    // EXECUTA UMA CONSULTA SQL PARA SELECIONAR TODOS OS PACIENTES
-    const pacientes = await pool.query('SELECT * FROM pacientes');
-    // RETORNA O RESULTADO COMO JSON COM STATUS 200 (OK)
-    response.status(200).json(pacientes.rows);
+    response.status(200).json(users);
 });
 
 // DEFINE UMA ROTA POST (CRIAR) PARA O ENDPOINT '/usuarios'
