@@ -13,24 +13,26 @@ app.get(("/users"), async (request, response) => {
     response.status(200).json(users);    
 });
 
-// DEFINE UMA ROTA POST (CRIAR) PARA O ENDPOINT '/usuarios'
-app.post("/usuarios", async (request, response) => {
-    // DESESTRUTURA OS CAMPOS 'nome', 'email' E 'data_nascimento' DO CORPO DA REQUISIÇÃO
-    const { nome, email, data_nascimento } = request.body;
-    // EXECUTA UMA CONSULTA SQL PARA INSERIR UM NOVO PACIENTE
-    const pacientes = await pool.query(
-        'INSERT INTO pacientes (nome, email, data_nascimento) VALUES ($1, $2, $3)',
-        [nome, email, data_nascimento]
-    );
-    // RETORNA O OBJETO INSERIDO COMO JSON COM STATUS 201 (CREATED)
-    response.status(201).json({ nome: nome, email: email, data_nascimento: data_nascimento });
+
+app.post("/users", async (request, response) => {
+    
+    const { name, email } = request.body;
+    
+    const user = await prisma.user.create({
+        data: {
+            name,
+            email
+        }
+    })
+
+    response.status(201).json(user);
 });
 
-// DEFINE UMA ROTA PUT (ATUALIZAR) PARA O ENDPOINT '/usuario/:id'
+
 app.put("/usuario/:id", async (request, response) => {
-    // DESESTRUTURA OS CAMPOS 'nome', 'email' E 'data_nascimento' DO CORPO DA REQUISIÇÃO
+    
     const { nome, email, data_nascimento } = request.body;
-    // PEGA O 'id' DOS PARÂMETROS DA ROTA
+    
     const { id } = request.params;
 
     // EXECUTA UMA CONSULTA SQL PARA SELECIONAR UM PACIENTE PELO ID
