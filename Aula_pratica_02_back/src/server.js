@@ -65,14 +65,16 @@ app.delete("/users/:id", async (request, response) => {
 
 
     if (user) {
-        await prisma.user.delete
+        await prisma.user.delete({
+            where: { id }
+        })
         
-        response.status(200).json('');
+        response.status(204).send()
     } else {
        
-        response.status(404).json("Usuário não encontrado");
+        response.status(404).json("Usuário não encontrado"); 
     }
-});
+}) 
 
 
 app.listen(3000, () => {
