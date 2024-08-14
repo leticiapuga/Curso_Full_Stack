@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id                    String    @id @default(uuid())
+  nome                  String    
+  email_user            String    @unique
+  senha                 String
+  cpf                   String    @unique
+  avaliacao             Int       @default(0)
+  data_nascimento       DateTime
+  livros                Livro[]  
+  trocas                Troca[]
+  avaliacoes            Avaliacao[]
+  usuario_troca         Usuario_troca[]
+
+  @@map("usuarios")
+}
+
+model Livro {
+  id                          String     @id @default(uuid())
+  titulo_livro                String
+  autor_livro                 String
+  data_publicacao             DateTime
+  genero                      String
+  condicao_livro              String
+  descricao                   String
+  disponibilidade_troca       Boolean    @default(true)
+  isbn                        String?
+  disponibilidade_emprestimo  Boolean    @default(false)
+  usuario_id                  String
+  usuario_livro               Usuario    @relation(fields: [usuario_id], references: [id])
+  trocas                      Troca[]
+
+  @@map("livros")
+}
+
+model Troca {
+  id                            String     @id @default(uuid())
+  livro_oferecido               String
+  livro_desejado                String
+  data_solicitacao              DateTime   @default(now())
+  data_aceitacao                DateTime
+  forma_envio                   String
+  endereco_entrega              String
+  status                        Status     @default(solicitada)
+  usuario_id                    String
+  usuario_troca                 Usuario    @relation(fields: [usuario_id], references: [id])
+  livro_id                      String
+  livro_troca                   Livro      @relation(fields: [livro_id], references: [id])
+  usuario_troca_relacao         Usuario_troca[]
+  avaliacao_relacao             Avaliacao[]
+
+  @@map("trocas")
+}
+
+model Usuario_troca {
+  id_usuario_troca          String     @id @default(uuid())
+  participacao              String
+  usuario_id                String
+  troca_id                  String
+  usuario                   Usuario    @relation(fields: [usuario_id], references: [id])
+  troca                     Troca      @relation(fields: [troca_id], references: [id])
+
+  @@map("usuario_trocas")
+}
+
+model Avaliacao {
+  id                    String      @id @default(uuid())
+  nota                  Int
+  comentario            String
+  data_avaliacao        DateTime    @default(now())
+  usuario_id            String
+  troca_id              String
+
+  usuario               Usuario     @relation(fields: [usuario_id], references: [id])
+  troca                 Troca       @relation(fields: [troca_id], references: [id])
+
+  @@map("avaliacoes")
+}
+
+enum Status {
+  solicitada
+  aceita
+  separacao
+  enviada
+  concluida
+}
