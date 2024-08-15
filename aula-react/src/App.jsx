@@ -1,24 +1,21 @@
-import { useState } from 'react'
-import './App.css'
-import User from './components/User'
+import ClientForm from './components/ClientForm'
+import { Route, Routes } from 'react-router-dom'
+import ClientList from './components/ClientList'
+import OrderList from './components/OrderList'
+import OrderForm from './components/OrderForm'
 
 function App() {
-  
-  const [users, setUsers] = useState(
-    [
-      {nome: "Nathalia", idade: 23},
-      {nome: "Nathalia", idade: 23},
-      {nome: "Nathalia", idade: 23},
-      {nome: "Nathalia", idade: 23},
-      {nome: "Nathalia", idade: 23}
-    ]
-  )
+ 
 
   return (
-    <>
-     <User nome= {"Nathalia"} idade={24}/>
-     <User nome= {"Michele"} idade={25}/>
-    </>
+    <Routes>
+      <Route path="/" element={<ClientList/>}/>
+      <Route path="/client-add" element={<ClientForm/>}/>
+      <Route path="/client-edit/:id" element={<ClientForm/>}/>
+      <Route path="/client/:id/order-add" element={<OrderForm/>}/>
+       <Route path="/client/:id/order-edit/:orderId" element={<OrderForm/>}/>
+       <Route path="/client/:id/order-list" element={<OrderList/>}/>
+    </Routes>
   )
 }
 
